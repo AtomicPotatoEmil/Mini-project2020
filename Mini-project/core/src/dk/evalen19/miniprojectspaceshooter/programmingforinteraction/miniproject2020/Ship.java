@@ -21,26 +21,32 @@ public class Ship {
     }
 
     public void setPositionX(int x){
+
         this.positionX = x;
     }
 
     public void setPositionY(int y){
+
         this.positionY = y;
     }
 
     public float getPositionX(){
+
         return this.positionX;
     }
 
     public float getPositionY(){
+
         return this.positionY;
     }
 
     public void movePositionX(float speed){
+
         this.positionX += speed * Gdx.graphics.getDeltaTime();
     }
 
     public void movePositionY(float speed){
+
         this.positionY += speed * Gdx.graphics.getDeltaTime();
     }
 
