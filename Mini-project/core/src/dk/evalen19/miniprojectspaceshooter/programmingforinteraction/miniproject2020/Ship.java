@@ -30,12 +30,12 @@ public class Ship {
         this.positionY = y;
     }
 
-    public float getPositionX(){
+    public int getPositionX(){
 
         return this.positionX;
     }
 
-    public float getPositionY(){
+    public int getPositionY(){
 
         return this.positionY;
     }

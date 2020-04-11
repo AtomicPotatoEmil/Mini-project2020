@@ -6,22 +6,32 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
+
+import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
 
 public class GameScreen implements Screen {
     GameState gameState;
+
     OrthographicCamera camera;
     SpriteBatch batch;
+
     PlayerShip playerShip;
     PlayerController playerController;
 
+
+    PlayerBullet playerBullet;
+
     public GameScreen(GameState gameState){
         this.gameState = gameState;
-
     }
 
     @Override
     public void show() {
         batch = new SpriteBatch();
+
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1080, 1920);
 
@@ -33,15 +43,25 @@ public class GameScreen implements Screen {
         playerController = new PlayerController();
         playerShip.makeBoostParticles();
         playerShip.makeExplosionParticles();
+
+        playerBullet = new PlayerBullet(playerShip.getPositionX(), playerShip.getPositionY());
     }
 
     @Override
     public void render(float delta) {
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+
         camera.update();
         batch.setProjectionMatrix(camera.combined);
 
 
+
+
         playerController.updateAcceleration();
+
+
         playerShip.setHurtbox(150, 150);
         if (playerController.accelerationZ > 9){
             playerShip.movePositionY(200);
@@ -65,17 +85,34 @@ public class GameScreen implements Screen {
         if (playerShip.getPositionY() > 1920 - 150){
             playerShip.setPositionY(1920 -150);
         }
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        batch.begin();
-        playerShip.updateBoostParticles(batch);
-        batch.draw(playerShip.getPlayerImage(), playerShip.getPositionX(), playerShip.getPositionY(), 150, 150 );
-        if(Gdx.input.isTouched()){
-            playerShip.setAlive(false);
+        if(Gdx.input.justTouched()){
+            playerBullet.bullets.add(new PlayerBullet(playerShip.getPositionX(), playerShip.getPositionY()));
         }
+
+        for (Iterator<PlayerBullet> iter = playerBullet.bullets.iterator(); iter.hasNext(); ) {
+            PlayerBullet bullet = iter.next();
+            bullet.updateBullet(1500);
+            if (bullet.positionY > 1920){
+                iter.remove();
+            }
+        }
+
+
+        batch.begin();
+
+
+        playerShip.updateBoostParticles(batch);
+        for(PlayerBullet bullet: playerBullet.bullets){
+            bullet.shootBullet(batch, 40, 70);
+            System.out.println(playerBullet.bullets);
+        }
+        batch.draw(playerShip.getPlayerImage(), playerShip.getPositionX(), playerShip.getPositionY(), 150, 150 );
+
         if (playerShip.getAlive() == false) {
             playerShip.activateExplosion(batch);
         }
+
+
         batch.end();
     }
 
