@@ -6,8 +6,8 @@ import com.badlogic.gdx.math.Rectangle;
 public class Ship {
 
     protected Rectangle hurtbox;
-    private float positionX;
-    private float positionY;
+    private int positionX;
+    private int positionY;
 
     public Ship(){
         hurtbox = new Rectangle();
@@ -40,12 +40,12 @@ public class Ship {
         return this.positionY;
     }
 
-    public void movePositionX(float speed){
+    public void movePositionX(int speed){
 
         this.positionX += speed * Gdx.graphics.getDeltaTime();
     }
 
-    public void movePositionY(float speed){
+    public void movePositionY(int speed){
 
         this.positionY += speed * Gdx.graphics.getDeltaTime();
     }
